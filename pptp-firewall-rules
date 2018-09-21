@@ -4,7 +4,7 @@ net.ipv4.ip_forward=1
 Apply the change
 
 sysctl -p
-Setup forwarding rules
+#Setup forwarding rules
 
 iptables -A INPUT -i eth0 -p tcp --dport 1723 -j ACCEPT
 iptables -A INPUT -i eth0 -p gre -j ACCEPT
@@ -13,3 +13,17 @@ iptables -A FORWARD -i ppp+ -o eth0 -j ACCEPT
 iptables -A FORWARD -i eth0 -o ppp+ -j ACCEPT
 iptables --table nat --append POSTROUTING   --out-interface ppp0 --jump MASQUERADE
 iptables -I FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
+
+
+#Install iptables-persistent:
+
+sudo apt-get install iptables-persistent
+After it's installed, you can save/reload iptables rules anytime:
+
+sudo /etc/init.d/iptables-persistent save 
+sudo /etc/init.d/iptables-persistent reload
+Ubuntu 16.04 Server
+The installation as described above works without a problem, but the two commands for saving and reloading above do not seem to work with a 16.04 server. The following commands work with that version:
+
+sudo netfilter-persistent save
+sudo netfilter-persistent reload
